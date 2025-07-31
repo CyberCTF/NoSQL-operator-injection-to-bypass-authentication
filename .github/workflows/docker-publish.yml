@@ -27,6 +27,7 @@ jobs:
         with:
           context: .
           file: ./deploy/Dockerfile
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: cyberctf/nosql-injection-lab-login:latest
 

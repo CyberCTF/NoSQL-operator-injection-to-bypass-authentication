@@ -17,11 +17,6 @@ docker run -d -p 3206:5000 --name nosql-lab cyberctf/nosql-injection-lab:latest
 ### Access the Application
 Open your browser and navigate to: `http://localhost:3206`
 
-## Demo Accounts
-
-- **Customer:** john_doe / password123
-- **Customer:** jane_smith / jane123
-- **Admin:** admin / admin_secret_2024 (hidden account)
 
 ## Learning Objectives
 
