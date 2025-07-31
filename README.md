@@ -46,26 +46,22 @@ This lab demonstrates a real-world NoSQL injection vulnerability in a Flask-base
 │       └── init/           # MongoDB initialization scripts
 ├── deploy/
 │   ├── docker-compose.yaml # Production Docker configuration
-│   ├── Dockerfile         # Container definition
 │   └── metadata.json      # Application metadata
 ├── docs/
 │   └── WRITEUP.md         # Detailed exploitation guide
 ├── test/
 │   ├── test_lab.py        # Automated tests
 │   └── requirements.txt   # Test dependencies
+├── docker-compose.yml     # Production with Docker Hub image
+├── docker-compose.dev.yml # Development environment
 └── README.md              # This file
 ```
 
 ## Quick Start
 
-### Prerequisites
-- Docker
-- Python 3.11+
-- Burp Suite Community Edition
-
-### Development Setup
+### Option 1: Development Environment (Recommended)
 ```bash
-# Start development environment
+# Start development environment with local build
 docker-compose -f docker-compose.dev.yml up --build
 
 # Access the application
@@ -73,11 +69,22 @@ docker-compose -f docker-compose.dev.yml up --build
 # MongoDB: localhost:27017
 ```
 
-### Production Setup
+### Option 2: Production with Docker Hub Image
 ```bash
-# Start production environment
-cd deploy
-docker-compose up --build
+# Start production environment with pre-built image
+docker-compose up
+
+# Access the application
+# Web: http://localhost:3206
+```
+
+### Option 3: Manual Setup
+```bash
+# Start MongoDB only
+docker-compose -f docker-compose.dev.yml up mongodb -d
+
+# Start web application
+docker-compose -f docker-compose.dev.yml up web --build
 ```
 
 ## Demo Accounts
@@ -122,6 +129,11 @@ The flag is displayed in the admin dashboard after successful exploitation:
 ## ARM Compatibility
 
 This lab is compatible with ARM architectures (Apple Silicon, ARM64) using MongoDB 4.4 which doesn't require AVX support.
+
+## Docker Images
+
+- **Development:** Built locally from `build/web/Dockerfile`
+- **Production:** Available on Docker Hub as `cyberctf/nosql-injection-lab-login:latest`
 
 ## Issue Tracker
 

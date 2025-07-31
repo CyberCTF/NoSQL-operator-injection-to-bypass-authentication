@@ -25,8 +25,8 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          context: .
-          file: ./deploy/Dockerfile
+          context: ./build/web
+          file: ./build/web/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
           tags: cyberctf/nosql-injection-lab-login:latest
@@ -37,4 +37,4 @@ jobs:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_PAT }}
           repository: cyberctf/nosql-injection-lab-login
-          readme-filepath: ./deploy/README.md 
+          readme-filepath: ./README.md 
