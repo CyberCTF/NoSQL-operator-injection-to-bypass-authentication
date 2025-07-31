@@ -1,0 +1,45 @@
+{
+  "site": {
+    "name": "ShoppingNow",
+    "description": "Your trusted e-commerce platform",
+    "logo": "/logo.svg",
+    "copyright": "2025 ShoppingNow Inc."
+  },
+  "navigation": {
+    "main": [
+      { "link": "/", "title": "Home" },
+      { "link": "/customer-portal", "title": "Customer Portal" }
+    ],
+    "auth": [
+      { "link": "/login", "title": "Login" }
+    ]
+  },
+  "footer": {
+    "links": [
+      { "link": "/", "title": "Home" },
+      { "link": "/customer-portal", "title": "Customer Portal" }
+    ],
+    "social": [
+      {
+        "name": "Website",
+        "href": "https://www.shoppingnow.com",
+        "icon": "website"
+      },
+      {
+        "name": "Support",
+        "href": "mailto:support@shoppingnow.com",
+        "icon": "email"
+      }
+    ]
+  },
+  "challenge": {
+    "title": "Database Security Assessment",
+    "description": "Identify and exploit the NoSQL injection vulnerability in the authentication system.",
+    "skills": ["NoSQL", "Security", "Web", "Authentication"],
+    "points": 160
+  },
+  "cta": {
+    "label": "Access Customer Portal",
+    "link": "/customer-portal"
+  }
+} 
