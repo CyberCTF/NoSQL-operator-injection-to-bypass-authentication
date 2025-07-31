@@ -62,11 +62,6 @@ This lab demonstrates a real-world NoSQL injection vulnerability in a Flask-base
 2. Run `docker-compose up` to start the environment
 3. Load the lab URL in Burp's browser: `http://localhost:3206`
 
-## Demo Accounts
-
-- **Customer:** john_doe / password123
-- **Customer:** jane_smith / jane123
-- **Admin:** admin / admin_secret_2024 (hidden account)
 
 ## Vulnerability Details
 
