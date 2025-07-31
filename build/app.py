@@ -27,8 +27,8 @@ def load_metadata():
 def get_mongodb_client():
     """Get MongoDB client with connection to the database"""
     try:
-        # Try to connect to MongoDB container
-        client = MongoClient('mongodb://mongodb:27017/', serverSelectionTimeoutMS=5000)
+        # Connect to MongoDB with authentication
+        client = MongoClient('mongodb://admin:password123@mongodb:27017/', serverSelectionTimeoutMS=5000)
         # Test the connection
         client.admin.command('ping')
         return client
@@ -37,40 +37,10 @@ def get_mongodb_client():
         return None
 
 def init_database():
-    """Initialize the database with sample data"""
+    """Initialize the database connection"""
     client = get_mongodb_client()
     if client:
-        db = client.shoppingnow
-        users_collection = db.users
-        
-        # Check if users already exist
-        if users_collection.count_documents({}) == 0:
-            # Insert sample users
-            users = [
-                {
-                    "username": "john_doe",
-                    "password": "password123",
-                    "email": "john@example.com",
-                    "role": "customer",
-                    "orders": ["ORD-001", "ORD-002"]
-                },
-                {
-                    "username": "admin",
-                    "password": "admin_secret_2024",
-                    "email": "admin@shoppingnow.com",
-                    "role": "admin",
-                    "permissions": ["manage_users", "view_analytics", "manage_orders"]
-                },
-                {
-                    "username": "jane_smith",
-                    "password": "jane123",
-                    "email": "jane@example.com",
-                    "role": "customer",
-                    "orders": ["ORD-003"]
-                }
-            ]
-            users_collection.insert_many(users)
-            print("Database initialized with sample data")
+        print("MongoDB connection established successfully")
         return client
     return None
 
