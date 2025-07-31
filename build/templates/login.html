@@ -21,6 +21,11 @@
             {% endif %}
         {% endwith %}
         
+        <!-- Error message container -->
+        <div id="errorMessage" class="hidden bg-red-900 border border-red-700 text-red-200 px-4 py-3 rounded relative" role="alert">
+            <span id="errorText" class="block sm:inline"></span>
+        </div>
+        
         <div class="bg-gray-900/50 backdrop-blur-sm border border-gray-800 rounded-lg p-8 shadow-xl">
             <form id="loginForm" class="space-y-6">
                 <div>
@@ -67,6 +72,11 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+    
+    // Hide any previous error messages
+    errorMessage.classList.add('hidden');
     
     try {
         const response = await fetch('/login', {
@@ -85,11 +95,13 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
         if (data.success) {
             window.location.href = data.redirect;
         } else {
-            alert(data.message || 'Login failed');
+            errorText.textContent = data.message || 'Login failed';
+            errorMessage.classList.remove('hidden');
         }
     } catch (error) {
         console.error('Error:', error);
-        alert('An error occurred during login');
+        errorText.textContent = 'An error occurred during login';
+        errorMessage.classList.remove('hidden');
     }
 });
 </script>

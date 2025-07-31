@@ -5,7 +5,7 @@ import time
 
 BASE_URL = "http://localhost:3206"
 
-class TestNoSQLInjection:
+class TestLab:
     
     def test_home_page_accessible(self):
         """Test that the home page is accessible"""

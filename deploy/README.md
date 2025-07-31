@@ -6,17 +6,22 @@ A deliberately vulnerable e-commerce application demonstrating MongoDB NoSQL inj
 
 ### Pull the Image
 ```bash
-docker pull cyberctf/nosql-injection-lab:latest
+docker pull cyberctf/nosql-injection-lab-login:latest
 ```
 
 ### Run the Container
 ```bash
-docker run -d -p 3206:5000 --name nosql-lab cyberctf/nosql-injection-lab:latest
+docker run -d -p 3206:5000 --name nosql-lab cyberctf/nosql-injection-lab-login:latest
 ```
 
 ### Access the Application
 Open your browser and navigate to: `http://localhost:3206`
 
+## Demo Accounts
+
+- **Customer:** john_doe / password123
+- **Customer:** jane_smith / jane123
+- **Admin:** admin / admin_secret_2024 (hidden account)
 
 ## Learning Objectives
 
@@ -39,6 +44,12 @@ Open your browser and navigate to: `http://localhost:3206`
 - Finding and exploiting NoSQL injection vulnerabilities
 - Crafting JSON injection payloads
 - Authentication bypass strategies
+
+## Platform Support
+
+This Docker image supports multiple architectures:
+- **AMD64** (x86_64) - Intel/AMD processors
+- **ARM64** (aarch64) - Apple Silicon (M1/M2), ARM servers
 
 ## How to Report Issues
 

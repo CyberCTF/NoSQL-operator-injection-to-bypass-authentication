@@ -3,6 +3,7 @@ import json
 import os
 from datetime import datetime
 import re
+from pymongo import MongoClient
 
 app = Flask(__name__, template_folder='templates', static_folder='static')
 app.secret_key = 'shoppingnow_secret_key_2024'
@@ -22,71 +23,59 @@ def load_metadata():
             "cta": {"label": "Start", "link": "/"}
         }
 
-# Simulated MongoDB database with vulnerable query structure
-class VulnerableMongoDB:
-    def __init__(self):
-        self.users = [
-            {
-                "username": "john_doe",
-                "password": "password123",
-                "email": "john@example.com",
-                "role": "customer",
-                "orders": ["ORD-001", "ORD-002"]
-            },
-            {
-                "username": "admin",
-                "password": "admin_secret_2024",
-                "email": "admin@shoppingnow.com",
-                "role": "admin",
-                "permissions": ["manage_users", "view_analytics", "manage_orders"]
-            },
-            {
-                "username": "jane_smith",
-                "password": "jane123",
-                "email": "jane@example.com",
-                "role": "customer",
-                "orders": ["ORD-003"]
-            }
-        ]
-    
-    def find_one(self, query):
-        """Vulnerable find_one method that directly evaluates query operators"""
-        # This is intentionally vulnerable - it processes MongoDB-like operators
-        for user in self.users:
-            match = True
-            for key, value in query.items():
-                if key == "username":
-                    if isinstance(value, dict):
-                        # Handle MongoDB operators
-                        if "$ne" in value:
-                            if user["username"] == value["$ne"]:
-                                match = False
-                        elif "$regex" in value:
-                            pattern = value["$regex"]
-                            if not re.search(pattern, user["username"]):
-                                match = False
-                    else:
-                        if user["username"] != value:
-                            match = False
-                elif key == "password":
-                    if isinstance(value, dict):
-                        # Handle MongoDB operators
-                        if "$ne" in value:
-                            if user["password"] == value["$ne"]:
-                                match = False
-                        elif "$regex" in value:
-                            pattern = value["$regex"]
-                            if not re.search(pattern, user["password"]):
-                                match = False
-                    else:
-                        if user["password"] != value:
-                            match = False
-            if match:
-                return user
+# MongoDB connection
+def get_mongodb_client():
+    """Get MongoDB client with connection to the database"""
+    try:
+        # Try to connect to MongoDB container
+        client = MongoClient('mongodb://mongodb:27017/', serverSelectionTimeoutMS=5000)
+        # Test the connection
+        client.admin.command('ping')
+        return client
+    except Exception as e:
+        print(f"MongoDB connection failed: {e}")
         return None
 
-# Initialize vulnerable database
-db = VulnerableMongoDB()
+def init_database():
+    """Initialize the database with sample data"""
+    client = get_mongodb_client()
+    if client:
+        db = client.shoppingnow
+        users_collection = db.users
+        
+        # Check if users already exist
+        if users_collection.count_documents({}) == 0:
+            # Insert sample users
+            users = [
+                {
+                    "username": "john_doe",
+                    "password": "password123",
+                    "email": "john@example.com",
+                    "role": "customer",
+                    "orders": ["ORD-001", "ORD-002"]
+                },
+                {
+                    "username": "admin",
+                    "password": "admin_secret_2024",
+                    "email": "admin@shoppingnow.com",
+                    "role": "admin",
+                    "permissions": ["manage_users", "view_analytics", "manage_orders"]
+                },
+                {
+                    "username": "jane_smith",
+                    "password": "jane123",
+                    "email": "jane@example.com",
+                    "role": "customer",
+                    "orders": ["ORD-003"]
+                }
+            ]
+            users_collection.insert_many(users)
+            print("Database initialized with sample data")
+        return client
+    return None
+
+# Initialize database on startup
+mongodb_client = init_database()
 
 @app.route('/')
 def home():
@@ -113,16 +102,21 @@ def admin_dashboard():
         flash('Access denied. Admin privileges required.', 'error')
         return redirect(url_for('customer_portal'))
     
-    # Admin-specific data
+    # Get admin data from MongoDB
     admin_data = {
-        'total_users': len(db.users),
-        'total_orders': sum(len(user.get('orders', [])) for user in db.users),
+        'total_users': 0,
+        'total_orders': 0,
         'recent_activity': [
             {'action': 'User login', 'user': 'john_doe', 'time': '2024-01-15 10:30'},
             {'action': 'Order placed', 'user': 'jane_smith', 'time': '2024-01-15 09:15'},
             {'action': 'System backup', 'user': 'admin', 'time': '2024-01-15 08:00'}
         ]
     }
+    
+    if mongodb_client:
+        db = mongodb_client.shoppingnow
+        admin_data['total_users'] = db.users.count_documents({})
+        admin_data['total_orders'] = sum(len(user.get('orders', [])) for user in db.users.find({}))
     
     return render_template('admin_dashboard.html', user=user, admin_data=admin_data, metadata=load_metadata())
 
@@ -133,21 +127,25 @@ def login():
         username = data.get('username')
         password = data.get('password')
         
-        # Vulnerable query - directly uses user input without sanitization
-        query = {"username": username, "password": password}
-        user = db.find_one(query)
-        
-        if user:
-            # Remove password from session
-            session_user = {k: v for k, v in user.items() if k != 'password'}
-            session['user'] = session_user
+        if mongodb_client:
+            db = mongodb_client.shoppingnow
+            # Vulnerable query - directly uses user input without sanitization
+            query = {"username": username, "password": password}
+            user = db.users.find_one(query)
             
-            if user['role'] == 'admin':
-                return jsonify({'success': True, 'redirect': '/admin-dashboard'})
+            if user:
+                # Remove password and MongoDB ObjectId from session
+                session_user = {k: v for k, v in user.items() if k not in ['password', '_id']}
+                session['user'] = session_user
+                
+                if user['role'] == 'admin':
+                    return jsonify({'success': True, 'redirect': '/admin-dashboard'})
+                else:
+                    return jsonify({'success': True, 'redirect': '/customer-portal'})
             else:
-                return jsonify({'success': True, 'redirect': '/customer-portal'})
+                return jsonify({'success': False, 'message': 'Invalid credentials'})
         else:
-            return jsonify({'success': False, 'message': 'Invalid credentials'})
+            return jsonify({'success': False, 'message': 'Database connection error'})
     
     metadata = load_metadata()
     return render_template('login.html', metadata=metadata)

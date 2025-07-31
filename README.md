@@ -45,7 +45,7 @@ This lab demonstrates a real-world NoSQL injection vulnerability in a Flask-base
 │   ├── Dockerfile           # Container definition
 │   └── metadata.json        # Application metadata
 ├── test/
-│   ├── test_nosql_injection.py  # Automated tests
+│   ├── test_lab.py          # Automated tests
 │   └── requirements.txt     # Test dependencies
 └── README.md               # This file
 ```
@@ -75,17 +75,10 @@ The application uses a vulnerable MongoDB query structure in the login endpoint:
 ```python
 # Vulnerable query - directly uses user input without sanitization
 query = {"username": username, "password": password}
-user = db.find_one(query)
+user = db.users.find_one(query)
 ```
 
 The `find_one` method processes MongoDB operators directly, allowing injection attacks.
-
-## Exploitation Steps
-
-1. **Identify the vulnerability**: The login form accepts JSON payloads
-2. **Test basic bypass**: Use `{"$ne": ""}` for both username and password
-3. **Target admin account**: Use `{"$regex": "admin.*"}` for username
-4. **Verify success**: Access the admin dashboard and retrieve the flag
 
 ## Testing
 
@@ -94,13 +87,13 @@ Run the automated tests to verify the vulnerability:
 ```bash
 cd test
 pip install -r requirements.txt
-python test_nosql_injection.py
+python test_lab.py
 ```
 
 Or run with pytest:
 
 ```bash
-pytest test_nosql_injection.py -v
+pytest test_lab.py -v
 ```
 
 ## Flag
