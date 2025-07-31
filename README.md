@@ -36,18 +36,24 @@ This lab demonstrates a real-world NoSQL injection vulnerability in a Flask-base
 
 ```
 ├── build/
-│   ├── app.py                 # Main Flask application
-│   ├── requirements.txt       # Python dependencies
-│   ├── templates/            # HTML templates
-│   └── static/              # Static assets
+│   ├── web/                 # Flask application
+│   │   ├── app.py          # Main Flask application
+│   │   ├── requirements.txt # Python dependencies
+│   │   ├── templates/      # HTML templates
+│   │   ├── static/         # Static assets
+│   │   └── Dockerfile      # Web container definition
+│   └── db/
+│       └── init/           # MongoDB initialization scripts
 ├── deploy/
-│   ├── docker-compose.yaml   # Docker configuration
-│   ├── Dockerfile           # Container definition
-│   └── metadata.json        # Application metadata
+│   ├── docker-compose.yaml # Production Docker configuration
+│   ├── Dockerfile         # Container definition
+│   └── metadata.json      # Application metadata
+├── docs/
+│   └── WRITEUP.md         # Detailed exploitation guide
 ├── test/
-│   ├── test_lab.py          # Automated tests
-│   └── requirements.txt     # Test dependencies
-└── README.md               # This file
+│   ├── test_lab.py        # Automated tests
+│   └── requirements.txt   # Test dependencies
+└── README.md              # This file
 ```
 
 ## Quick Start
@@ -57,11 +63,28 @@ This lab demonstrates a real-world NoSQL injection vulnerability in a Flask-base
 - Python 3.11+
 - Burp Suite Community Edition
 
-### Installation
-1. Clone the repository
-2. Run `docker-compose up` to start the environment
-3. Load the lab URL in Burp's browser: `http://localhost:3206`
+### Development Setup
+```bash
+# Start development environment
+docker-compose -f docker-compose.dev.yml up --build
 
+# Access the application
+# Web: http://localhost:3206
+# MongoDB: localhost:27017
+```
+
+### Production Setup
+```bash
+# Start production environment
+cd deploy
+docker-compose up --build
+```
+
+## Demo Accounts
+
+- **Customer:** john_doe / password123
+- **Customer:** jane_smith / jane123
+- **Admin:** admin / admin_secret_2024 (hidden account)
 
 ## Vulnerability Details
 
@@ -95,6 +118,10 @@ pytest test_lab.py -v
 
 The flag is displayed in the admin dashboard after successful exploitation:
 `FLAG{NoSQL_1nj3ct10n_4dm1n_byp4ss_2024}`
+
+## ARM Compatibility
+
+This lab is compatible with ARM architectures (Apple Silicon, ARM64) using MongoDB 4.4 which doesn't require AVX support.
 
 ## Issue Tracker
 

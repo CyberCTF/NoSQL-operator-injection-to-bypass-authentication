@@ -1,0 +1,34 @@
+services:
+  web:
+    build:
+      context: ./build/web
+      dockerfile: Dockerfile
+    ports:
+      - "3206:5000"
+    environment:
+      - FLASK_ENV=development
+      - MONGODB_URI=mongodb://mongodb:27017/shoppingnow
+    depends_on:
+      - mongodb
+    volumes:
+      - ./build/web:/app
+    networks:
+      - nosql-lab-network
+
+  mongodb:
+    image: mongo:4.4
+    container_name: nosql-lab-mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_DATABASE=shoppingnow
+    volumes:
+      - ./build/db:/data/db
+      - ./build/db/init:/docker-entrypoint-initdb.d
+    networks:
+      - nosql-lab-network
+    restart: unless-stopped
+
+networks:
+  nosql-lab-network:
+    driver: bridge 

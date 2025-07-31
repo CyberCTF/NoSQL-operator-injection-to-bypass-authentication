@@ -2,14 +2,13 @@ version: '3.8'
 services:
   web:
     build:
-      context: ..
-      dockerfile: deploy/Dockerfile
+      context: ../build/web
+      dockerfile: Dockerfile
     ports:
       - "3206:5000"
-    volumes:
-      - ../deploy:/app/../deploy:ro
     environment:
       - FLASK_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/shoppingnow
     depends_on:
       - mongodb
     restart: unless-stopped
@@ -17,15 +16,14 @@ services:
       - app-network
 
   mongodb:
-    image: mongo:6.0
+    image: mongo:4.4
     container_name: nosql-lab-mongodb
     restart: unless-stopped
     environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password123
+      - MONGO_INITDB_DATABASE=shoppingnow
     volumes:
       - mongodb_data:/data/db
-      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+      - ../build/db/init:/docker-entrypoint-initdb.d
     networks:
       - app-network
 

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="mb-8">
+        <div class="flex items-center space-x-4 mb-6">
+            <div class="h-12 w-12 rounded-full bg-red-500/10 flex items-center justify-center">
+                <i data-lucide="shield" class="h-6 w-6 text-red-500"></i>
+            </div>
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight">Administrator Dashboard</h1>
+                <p class="text-muted-foreground">Welcome, {{ user.username }}! You have admin privileges.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- FLAG SECTION -->
+    <div class="mb-8">
+        <div class="rounded-lg border border-green-500/50 bg-green-500/10 p-6">
+            <div class="flex items-center space-x-2 mb-4">
+                <i data-lucide="trophy" class="h-5 w-5 text-green-500"></i>
+                <h2 class="text-xl font-semibold text-green-600">🎉 Congratulations! You've successfully exploited the NoSQL injection vulnerability!</h2>
+            </div>
+            <div class="bg-background border border-green-500/20 rounded-md p-4">
+                <p class="text-sm text-muted-foreground mb-2">Your flag:</p>
+                <code class="text-lg font-mono text-green-500 bg-green-500/10 px-3 py-2 rounded">FLAG{NoSQL_1nj3ct10n_4dm1n_byp4ss_2024}</code>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <!-- Stats Cards -->
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="p-6">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="h-8 w-8 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                        <i data-lucide="users" class="h-4 w-4 text-blue-500"></i>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-2xl font-bold">{{ admin_data.total_users }}</p>
+                    <p class="text-sm text-muted-foreground">Total Users</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="p-6">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="h-8 w-8 rounded-lg bg-green-500/10 flex items-center justify-center">
+                        <i data-lucide="package" class="h-4 w-4 text-green-500"></i>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-2xl font-bold">{{ admin_data.total_orders }}</p>
+                    <p class="text-sm text-muted-foreground">Total Orders</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="p-6">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="h-8 w-8 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                        <i data-lucide="activity" class="h-4 w-4 text-purple-500"></i>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-2xl font-bold">99.9%</p>
+                    <p class="text-sm text-muted-foreground">Uptime</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="p-6">
+                <div class="flex items-center space-x-2 mb-4">
+                    <div class="h-8 w-8 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                        <i data-lucide="trending-up" class="h-4 w-4 text-yellow-500"></i>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-2xl font-bold">+12%</p>
+                    <p class="text-sm text-muted-foreground">Growth</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="grid md:grid-cols-2 gap-6">
+        <!-- Recent Activity -->
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="p-6">
+                <div class="flex items-center space-x-2 mb-4">
+                    <i data-lucide="clock" class="h-5 w-5 text-blue-500"></i>
+                    <h3 class="text-lg font-semibold">Recent Activity</h3>
+                </div>
+                <div class="space-y-4">
+                    {% for activity in admin_data.recent_activity %}
+                    <div class="flex items-center space-x-3">
+                        <div class="h-2 w-2 rounded-full bg-blue-500"></div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium">{{ activity.action }}</p>
+                            <p class="text-xs text-muted-foreground">{{ activity.user }} • {{ activity.time }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+        <!-- Admin Actions -->
+        <div class="rounded-lg border bg-card text-card-foreground shadow-sm">
+            <div class="p-6">
+                <div class="flex items-center space-x-2 mb-4">
+                    <i data-lucide="settings" class="h-5 w-5 text-purple-500"></i>
+                    <h3 class="text-lg font-semibold">Admin Actions</h3>
+                </div>
+                <div class="space-y-3">
+                    <button class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+                        <i data-lucide="user-plus" class="mr-2 h-4 w-4"></i>
+                        Add User
+                    </button>
+                    <button class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                        <i data-lucide="database" class="mr-2 h-4 w-4"></i>
+                        Database Backup
+                    </button>
+                    <button class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                        <i data-lucide="bar-chart" class="mr-2 h-4 w-4"></i>
+                        View Analytics
+                    </button>
+                    <button class="w-full inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 border border-input bg-background hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">
+                        <i data-lucide="shield" class="mr-2 h-4 w-4"></i>
+                        Security Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+</script>
+{% endblock %} 
